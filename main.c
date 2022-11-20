@@ -4,11 +4,11 @@
 #include <time.h>
 #include <unistd.h>
 
-#define WIDTH (15)
-#define HEIGHT (15)
-#define NONE (70)
-#define ZERO (15)
-#define ONE (15)
+#define WIDTH (20)
+#define HEIGHT (20)
+#define NONE (80)
+#define ZERO (10)
+#define ONE (10)
 
 
 
@@ -38,6 +38,18 @@ int serch(int real, int y, int x, int flag)
             break;
         case 4:
             map[y][x+1]=0;
+            break;
+        case 5:
+            map[y-1][x-1]=0;
+            break;
+        case 6:
+            map[y+1][x-1]=0;
+            break;
+        case 7:
+            map[y+1][x+1]=0;
+            break;
+        case 8:
+            map[y-1][x+1]=0;
             break;
     }
     if (y+1 < HEIGHT && real == map[y+1][x]){
@@ -77,6 +89,42 @@ int serch(int real, int y, int x, int flag)
         sum--;
         // printf("h");
     }
+    if (x+1 < WIDTH && y+1 < HEIGHT &&real == map[y+1][x+1]){
+        sum++;
+        // printf("g");
+    // printf("[%d][%d]",real,map[y][x-1]);
+    }
+    else if (x+1 < WIDTH && y+1 < HEIGHT && map[y+1][x+1] != 0){
+        sum--;
+        // printf("h");
+    }
+    if (x+1 < WIDTH && y-1 >= 0 &&real == map[y-1][x+1]){
+        sum++;
+        // printf("g");
+    // printf("[%d][%d]",real,map[y][x-1]);
+    }
+    else if (x+1 < WIDTH && y-1 >= 0 && map[y-1][x+1] != 0){
+        sum--;
+        // printf("h");
+    }
+    if (x-1 >= 0 && y-1 >= 0 &&real == map[y-1][x-1]){
+        sum++;
+        // printf("g");
+    // printf("[%d][%d]",real,map[y][x-1]);
+    }
+    else if (x-1 >= 0 && y-1 >= 0 && map[y-1][x-1] != 0){
+        sum--;
+        // printf("h");
+    }
+    if (x-1 >= 0 && y+1 < HEIGHT &&real == map[y+1][x-1]){
+        sum++;
+        // printf("g");
+    // printf("[%d][%d]",real,map[y][x-1]);
+    }
+    else if (x-1 >= 0 && y+1 < HEIGHT && map[y+1][x-1] != 0){
+        sum--;
+        // printf("h");
+    }
     switch(flag){
         case 0:
             break;
@@ -91,6 +139,18 @@ int serch(int real, int y, int x, int flag)
             break;
         case 4:
             map[y][x+1]=real;
+            break;
+        case 5:
+            map[y-1][x-1]=real;
+            break;
+        case 6:
+            map[y+1][x-1]=real;
+            break;
+        case 7:
+            map[y+1][x+1]=real;
+            break;
+        case 8:
+            map[y-1][x+1]=real;
             break;
     }
     return sum;
@@ -119,42 +179,77 @@ void moov(int direction, int y, int x){
         map[y][x-1] = map[y][x];
         map[y][x] = 0;
     }
+    else if(direction == 5)
+    {
+        map[y+1][x+1] = map[y][x];
+        map[y][x] = 0;
+    }
+    else if(direction == 6)
+    {
+        map[y-1][x+1] = map[y][x];
+        map[y][x] = 0;
+    }
+    else if(direction == 7)
+    {
+        map[y-1][x-1] = map[y][x];
+        map[y][x] = 0;
+    }
+    else if(direction == 8)
+    {
+        map[y+1][x-1] = map[y][x];
+        map[y][x] = 0;
+    }
+
+    // sum[5] = serch(map[y][x], y + 1 , x + 1, 5); //migisita
+    //     sum[6] = serch(map[y][x], y - 1 , x + 1, 5); //migiue
+    //     sum[7] = serch(map[y][x], y - 1 , x - 1, 5); //hidariue
+    //     sum[8] = serch(map[y][x], y + 1 , x - 1, 5); //hidarisita
 }
 
 void premoov(int* direction, int y, int x){
     int ans;
 
     printf("(x = %d, y = %d, cell = %d)",x, y, map[y][x]);
-    for (size_t i = 0; i < 5; i++){
+    for (size_t i = 0; i < 9; i++){
         printf("%d",direction[i]);
     }
     printf(",");
     while (1){
-        for (int i = 0; i < 5; i++){
+        for (int i = 0; i < 9; i++){
             printf("[%d.%d]",direction[i],test[grand]);
-            if (direction[i] == test[grand]){
-                printf("[%d.%d]",direction[i],test[grand]);
+            if (direction[i]==test[grand])
+            {
                 moov(i, y, x);
                 grand++;
-                if (grand == 49){
+                if (grand == 99){
                     grand = 0;
                 }
                 return ;
             }
-            grand++;
-            if (grand == 49){
-                grand = 0;
-            }
+            
+            // if (direction[i] == test[grand]){
+            //     printf("[%d.%d]",direction[i],test[grand]);
+            //     moov(i, y, x);
+            //     grand++;
+            //     if (grand == 99){
+            //         grand = 0;
+            //     }
+            //     return ;
+            // }
+        }
+        grand++;
+        if (grand == 99){
+            grand = 0;
         }
     }
     return ;
 }
 
 void change(int y, int x){
-    int sum[] = {0,0,0,0,0};
+    int sum[] = {0,0,0,0,0,0,0,0,0};
     int new_sum = 0;
     int max = 0;
-    int direction[5] = {5,5,5,5,5};
+    int direction[] = {15,15,15,15,15,15,15,15,15};
 
     if (map[y][x] != 0){
         sum[0] = serch(map[y][x], y, x, 0);
@@ -167,8 +262,12 @@ void change(int y, int x){
         // printf("-up-");  //up
         sum[4] = serch(map[y][x], y , x - 1, 4);
         // printf("left"); //left
+        sum[5] = serch(map[y][x], y + 1 , x + 1, 5); //migisita
+        sum[6] = serch(map[y][x], y - 1 , x + 1, 6); //migiue
+        sum[7] = serch(map[y][x], y - 1 , x - 1, 7); //hidariue
+        sum[8] = serch(map[y][x], y + 1 , x - 1, 8); //hidarisita
     }
-    for (int i = 0; i < 5; i++){
+    for (int i = 0; i < 9; i++){
         if (i == 0){
             max = sum[0];
         }else if(sum[i] > max){
@@ -176,7 +275,7 @@ void change(int y, int x){
             new_sum = i;
         }
     }
-    for (int i = 0; i < 5; i++){
+    for (int i = 0; i < 9; i++){
         if (sum[i] == max){
             direction[i] = i;
         }
@@ -185,10 +284,14 @@ void change(int y, int x){
     // printf("[%d],[%d]",direction, new_sum);
     // printf("~%d~",new_sum);
     if (direction[0] == 0 &&
-        direction[1] == 5 &&
-        direction[2] == 5 &&
-        direction[3] == 5 &&
-        direction[4] == 5 ){
+        direction[1] == 15 &&
+        direction[2] == 15 &&
+        direction[3] == 15 &&
+        direction[4] == 15 &&
+        direction[5] == 15 &&
+        direction[6] == 15 &&
+        direction[7] == 15 &&
+        direction[8] == 15 ){
         return ;
     }else if (map[y][x] != 0){
         premoov(&direction[0], y, x);
@@ -200,8 +303,8 @@ int main(){
     srand((unsigned int)time(NULL));
     int alt;
 
-    for (size_t i = 0; i < 50; i++){
-        test[i] = 1 + rand() % 4;
+    for (size_t i = 0; i < 100; i++){
+        test[i] = 1 + rand() % 8;
         printf("%d\n", test[i]);
     }
     for (int y = 0; y < HEIGHT; y++){
@@ -219,10 +322,10 @@ int main(){
                     printf(" ");
                     break;
                 case 1:
-                    printf("0");
+                    printf("□");
                     break;
                 case 2:
-                    printf("1");
+                    printf("■");
                     break;
                 default:
                     break;
@@ -247,10 +350,10 @@ int main(){
                     printf(" ");
                     break;
                 case 1:
-                    printf("0");
+                    printf("□");
                     break;
                 case 2:
-                    printf("1");
+                    printf("■");
                     break;
                 default:
                     break;
